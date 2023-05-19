@@ -19,6 +19,31 @@ if [ -n "${GITHUB_API_TOKEN:-}" ]; then
 	curl_opts=("${curl_opts[@]}" -H "Authorization: token $GITHUB_API_TOKEN")
 fi
 
+get_machine_os() {
+  local OS
+  OS=$(uname -s | tr '[:upper:]' '[:lower:]')
+
+  case "${OS}" in
+    darwin*) echo "macos" ;;
+     linux*) echo "linux" ;;
+          *) fail "OS not supported: ${OS}" ;;
+  esac
+}
+
+get_machine_arch() {
+  local ARCH
+  ARCH=$(uname -m | tr '[:upper:]' '[:lower:]')
+
+  case "${ARCH}" in
+       i?86) echo "386" ;;
+     x86_64) echo "amd64" ;;
+    aarch64) echo "arm64" ;;
+     armv8l) echo "arm64" ;;
+      arm64) echo "arm64" ;;
+          *) fail "Architecture not supported: $ARCH" ;;
+  esac
+}
+
 sort_versions() {
 	sed 'h; s/[+-]/./g; s/.p\([[:digit:]]\)/.z\1/; s/$/.z/; G; s/\n/ /' |
 		LC_ALL=C sort -t. -k 1,1 -k 2,2n -k 3,3n -k 4,4n -k 5,5n | awk '{print $2}'
@@ -41,8 +66,11 @@ download_release() {
 	version="$1"
 	filename="$2"
 
-	# TODO: Adapt the release URL convention for garden
-	url="$GH_REPO/archive/v${version}.tar.gz"
+	os=$(get_machine_os)
+	arch=$(get_machine_arch)
+
+	# TODO garden has only amd64 releases at the moment, this is why ${arch} is not used
+	url="$GH_REPO/releases/download/${version}/${TOOL_NAME}-${version}-${os}-amd64.tar.gz"
 
 	echo "* Downloading $TOOL_NAME release $version..."
 	curl "${curl_opts[@]}" -o "$filename" -C - "$url" || fail "Could not download $url"
