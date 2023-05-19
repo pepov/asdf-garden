@@ -62,15 +62,17 @@ list_all_versions() {
 }
 
 download_release() {
-	local version filename url
-	version="$1"
+	local build filename url
+	build="$1"
 	filename="$2"
+
+	version=$(echo $build | cut -d- -f1)
 
 	os=$(get_machine_os)
 	arch=$(get_machine_arch)
 
 	# TODO garden has only amd64 releases at the moment, this is why ${arch} is not used
-	url="$GH_REPO/releases/download/${version}/${TOOL_NAME}-${version}-${os}-amd64.tar.gz"
+	url="$GH_REPO/releases/download/${build}/${TOOL_NAME}-${version}-${os}-amd64.tar.gz"
 
 	echo "* Downloading $TOOL_NAME release $version..."
 	curl "${curl_opts[@]}" -o "$filename" -C - "$url" || fail "Could not download $url"
