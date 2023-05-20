@@ -20,28 +20,28 @@ if [ -n "${GITHUB_API_TOKEN:-}" ]; then
 fi
 
 get_machine_os() {
-  local OS
-  OS=$(uname -s | tr '[:upper:]' '[:lower:]')
+	local OS
+	OS=$(uname -s | tr '[:upper:]' '[:lower:]')
 
-  case "${OS}" in
-    darwin*) echo "macos" ;;
-     linux*) echo "linux" ;;
-          *) fail "OS not supported: ${OS}" ;;
-  esac
+	case "${OS}" in
+	darwin*) echo "macos" ;;
+	linux*) echo "linux" ;;
+	*) fail "OS not supported: ${OS}" ;;
+	esac
 }
 
 get_machine_arch() {
-  local ARCH
-  ARCH=$(uname -m | tr '[:upper:]' '[:lower:]')
+	local ARCH
+	ARCH=$(uname -m | tr '[:upper:]' '[:lower:]')
 
-  case "${ARCH}" in
-       i?86) echo "386" ;;
-     x86_64) echo "amd64" ;;
-    aarch64) echo "arm64" ;;
-     armv8l) echo "arm64" ;;
-      arm64) echo "arm64" ;;
-          *) fail "Architecture not supported: $ARCH" ;;
-  esac
+	case "${ARCH}" in
+	i?86) echo "386" ;;
+	x86_64) echo "amd64" ;;
+	aarch64) echo "arm64" ;;
+	armv8l) echo "arm64" ;;
+	arm64) echo "arm64" ;;
+	*) fail "Architecture not supported: $ARCH" ;;
+	esac
 }
 
 sort_versions() {
@@ -66,10 +66,10 @@ download_release() {
 	build="$1"
 	filename="$2"
 
-	version=$(echo $build | cut -d- -f1)
+	version=$(echo "${build}" | cut -d- -f1)
 
 	os=$(get_machine_os)
-	arch=$(get_machine_arch)
+	#arch=$(get_machine_arch)
 
 	# TODO garden has only amd64 releases at the moment, this is why ${arch} is not used
 	url="$GH_REPO/releases/download/${build}/${TOOL_NAME}-${version}-${os}-amd64.tar.gz"
