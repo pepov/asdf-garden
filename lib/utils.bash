@@ -66,7 +66,11 @@ download_release() {
 	build="$1"
 	filename="$2"
 
-	version=$(echo "${build}" | cut -d- -f1)
+	if [ "${build}" != "edge-bonsai" ]; then
+		version=$(echo "${build}" | cut -d- -f1)
+	else
+		version="edge-bonsai"
+	fi
 
 	os=$(get_machine_os)
 	#arch=$(get_machine_arch)
